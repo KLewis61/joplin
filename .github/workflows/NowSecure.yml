@@ -68,7 +68,7 @@ jobs:
         uses: nowsecure/nowsecure-action/upload-app@v2
         with:
           token: ${{ secrets.NS_TOKEN }}
-          app_file: app-debug.apk
+          app_file: app-release.apk
           # TODO: Replace the Group ID.
           group_id: 2a3e17b1-c363-466f-a64e-7b00054c5e2b
 
