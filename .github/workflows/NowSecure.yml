@@ -76,8 +76,6 @@ jobs:
   process:
     if: ${{ needs.scan.outputs.report_id }}
     runs-on: ubuntu-latest
-    environment:
-      name: nowsecure-env
     needs: scan
     steps:
       - name: Checkout repository
