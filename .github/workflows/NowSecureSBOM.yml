@@ -62,7 +62,7 @@ jobs:
           name: app
           
       - name: NowSecure upload app
-        uses: nowsecure/nowsecure-sbom-action@v2
+        uses: nowsecure/nowsecure-sbom-action@v1
         timeout-minutes: 120
         with:
           token: ${{ secrets.NS_TOKEN }}
