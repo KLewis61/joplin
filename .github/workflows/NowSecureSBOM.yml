@@ -1,0 +1,71 @@
+name: "NowSecure"
+
+on:
+  workflow_dispatch:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: "11"
+          distribution: "adopt"
+          cache: "gradle"
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+        
+      - name: Setup Node  
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Run Yarn Install
+        run: |
+             cd ./packages/app-mobile/
+             npm i -g corepack
+             yarn install
+      - name: Build application
+        run:  |
+             cd ./packages/app-mobile/android
+             ./gradlew assembleRelease
+      - name: Upload application
+        uses: actions/upload-artifact@v2
+        with:
+          name: app
+          path: ./packages/app-mobile/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 3
+          
+# Scan the Android application with NowSecure.
+  scan:
+    runs-on: ubuntu-latest
+    outputs:
+      report_id: ${{ steps.upload.outputs.report_id }}
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # NOTE: ripgrep is required for line-of-code identification.
+      - name: Install ripgrep
+        run: sudo apt-get install -y ripgrep
+
+      - name: Download application
+        uses: actions/download-artifact@v2
+        with:
+          name: app
+          
+      - name: NowSecure upload app
+        uses: nowsecure/nowsecure-sbom-action@v2
+        timeout-minutes: 120
+        with:
+          token: ${{ secrets.NS_TOKEN }}
+          app_file: app-release.apk # REPLACE: The path to an .ipa or .apk
+          group_id: 2a3e17b1-c363-466f-a64e-7b00054c5e2b         # REPLACE: NowSecure Group ID
+          
