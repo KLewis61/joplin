@@ -157,6 +157,16 @@ android {
 
         // Needed to fix: The number of method references in a .dex file cannot exceed 64K
         multiDexEnabled true
+
+        configurations.all {
+            resolutionStrategy {
+
+                force 'androidx.appcompat:appcompat:1.1.0'
+                force 'androidx.appcompat:appcompat-resources:1.1.0'
+                force 'androidx.tracing:tracing:1.0.0'
+
+            }
+        }
     }
     splits {
         abi {
