@@ -30,7 +30,6 @@ jobs:
         run: |
              cd ./packages/app-mobile/
              npm i -g corepack
-             yarn clean
              yarn install
 
       - name: Build application
