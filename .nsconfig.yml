@@ -1,5 +1,8 @@
 minimum-severity: info # Can be one of [critical, high, medium, low, info]
+
 key:
   platform: false                 # Don't use the platform when deriving an ID
   package: false                  # Don't use the package when deriving an ID
   v1-key: android net.cozic.joplin
+
+summary: true
