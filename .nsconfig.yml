@@ -5,4 +5,4 @@ key:
   package: false                  # Don't use the package when deriving an ID
   v1-key: android net.cozic.joplin
 
-summary: true
+summary: short
