@@ -17,4 +17,4 @@ configs:
       medium: medium
       high: high
       critical: critical
-  category-labels: true
+      category-labels: true
