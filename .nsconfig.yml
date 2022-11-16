@@ -7,19 +7,15 @@ key:
 
 summary: short
 
-configs:
-  issue-labels-simple:
-    lables: NowSecure
-  issue-labels-complex:
-    labels:
-      always: always
-      info:
-        - info
-      warning: warning
-      low:
-        - low
-      medium: medium
-      high:
-        - high
-      critical: critical
-      category-labels: true
+labels:
+  always: always
+  info:
+    - info
+  warning: warning
+  low:
+    - low
+  medium: medium
+  high:
+    - high
+  critical: critical
+  category-labels: true
