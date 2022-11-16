@@ -19,3 +19,4 @@ jobs:
         with:
           report_id: "79f9c942-6531-11ed-8006-df7c8bd31b79"
           platform_token: ${{ secrets.NS_TOKEN }}
+          config: "issues-labels"
