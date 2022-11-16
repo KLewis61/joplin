@@ -1,4 +1,4 @@
-name: "NowSecure Issues"
+name: "NowSecure Issues Test"
 
 on:
   workflow_dispatch:
