@@ -1,0 +1,106 @@
+name: "NowSecure GHAS"
+
+on:
+  workflow_dispatch:
+    branches: [ release-2.9 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: "11"
+          distribution: "adopt"
+          cache: "gradle"
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+        
+      - name: Setup Node  
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Run Yarn Install
+        run: |
+             cd ./packages/app-mobile/
+             npm i -g corepack
+             yarn install
+
+      - name: Build application
+        run:  |
+             cd ./packages/app-mobile/android
+             ./gradlew assembleRelease
+
+      - name: Upload application
+        uses: actions/upload-artifact@v2
+        with:
+          name: app
+          path: ./packages/app-mobile/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 3
+          
+# Scan the Android application with NowSecure.
+  scan:
+    runs-on: ubuntu-latest
+    outputs:
+      report_id: ${{ steps.upload.outputs.report_id }}
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # NOTE: ripgrep is required for line-of-code identification.
+      - name: Install ripgrep
+        run: sudo apt-get install -y ripgrep
+
+      - name: Download application
+        uses: actions/download-artifact@v2
+        with:
+          name: app
+
+      - id: upload
+        name: NowSecure upload app
+        uses: nowsecure/nowsecure-action/upload-app@v3
+        with:
+          platform_token: ${{ secrets.NS_TOKEN }}
+          app_file: app-release.apk
+          # TODO: Replace the Group ID.
+          group_id: 2a3e17b1-c363-466f-a64e-7b00054c5e2b
+
+  # Pulls the NowSecure report, converts it to SARIF and uploads it.
+  process:
+    if: ${{ needs.scan.outputs.report_id }}
+    runs-on: ubuntu-latest
+    environment:
+      name: nowsecure-env
+    needs: scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: NowSecure download report
+        uses: nowsecure/nowsecure-action/convert-sarif@v3
+        timeout-minutes: 90
+        with:
+          report_id: ${{ needs.scan.outputs.report_id }}
+          platform_token: ${{ secrets.NS_TOKEN }}
+          # TODO: Replace the Group ID.
+          group_id: 2a3e17b1-c363-466f-a64e-7b00054c5e2b
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: NowSecure.sarif
+
+      - name: Upload SARIF to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: NowSecure.sarif
+          path: ./NowSecure.sarif
+               
+          
