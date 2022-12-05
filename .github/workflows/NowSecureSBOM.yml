@@ -62,10 +62,10 @@ jobs:
           name: app
           
       - name: NowSecure upload app
-        uses: nowsecure/nowsecure-sbom-action@v1
+        uses: nowsecure/nowsecure-sbom-action@v2
         timeout-minutes: 120
         with:
-          token: ${{ secrets.NS_TOKEN }}
+          platform_token: ${{ secrets.NS_TOKEN }}
           app_file: app-release.apk # REPLACE: The path to an .ipa or .apk
           group_id: 2a3e17b1-c363-466f-a64e-7b00054c5e2b         # REPLACE: NowSecure Group ID
           
