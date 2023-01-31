@@ -1,20 +1,9 @@
-minimum-severity: info # Can be one of [critical, high, medium, low, info]
-
-key:
-  platform: false                 # Don't use the platform when deriving an ID
-  package: false                  # Don't use the package when deriving an ID
-  v1-key: android net.cozic.joplin
-
-summary: short
-
-configs:
-  issues-labels:
-    labels:
-      always: always
-      info: info
-      warning: warning
-      low: low
-      medium: medium
-      high: high
-      critical: critical
-      category-labels: true
+# Can be one of [critical, high, medium, low, info]
+minimum-severity: info 
+include-warnings: true
+summary: short  #Can be long or short
+include-checks:
+  - apk_hardcoded_keys
+  - apk_weak_crypto_methods
+exclude-checks:
+  - android_janus_warn
